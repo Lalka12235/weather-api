@@ -1,0 +1,31 @@
+services:
+  backend:
+    build: ./app/
+    container_name: weather-api
+    command: ["python", "main.py"]
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=27017
+      - DB_NAME=weather
+      - DB_USER=${MONGODB_USER}
+      - DB_PASSWORD=${MONGODB_PASSWORD}
+    ports:
+      - "5000:5000"  # Пример порта для API
+
+  db:
+    image: mongo
+    container_name: mongodb_weather
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_DATABASE=weather
+    ports:
+      - "27017:27017"
+    volumes:
+      - db_data:/data/db
+
+volumes:
+  db_data:
+    driver: local
